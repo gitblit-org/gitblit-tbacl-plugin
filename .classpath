@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java" />
+	<classpathentry kind="src" path="src/test/java" output="bin/test-classes" />
 	<classpathentry kind="src" path="src/main/resources" />
+	<classpathentry kind="src" path="src/test/resources" output="bin/test-classes" />
 	<classpathentry kind="lib" path="ext/gitblit-1.5.0.jar" sourcepath="ext/src/gitblit-1.5.0.jar" />
 	<classpathentry kind="lib" path="ext/dagger-1.1.0.jar" sourcepath="ext/src/dagger-1.1.0.jar" />
 	<classpathentry kind="lib" path="ext/javax.inject-1.jar" sourcepath="ext/src/javax.inject-1.jar" />

@@ -10,7 +10,7 @@ name: gitblit-tbacl-plugin
 description: Gitblit Team-Branch ACL (tbacl) Receive Hook
 groupId: com.gitblit.plugin
 artifactId: tbacl
-version: 1.0.1-SNAPSHOT
+version: 1.1.0-SNAPSHOT
 packaging: zip
 inceptionYear: 2014
 organization: gitblit.com
@@ -51,9 +51,11 @@ scm: {
 # a scope to each directory.
 sourceDirectories:
 - compile 'src/main/java'
+- test 'src/test/java'
 
 resourceDirectories:
 - compile 'src/main/resources'
+- test 'src/test/resources'
 
 # Define the main class for the build process
 mainclass: com.gitblit.plugin.tbacl.Plugin

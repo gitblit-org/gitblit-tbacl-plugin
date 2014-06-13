@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ro.fortsoft.pf4j.Extension;
+import ro.fortsoft.pf4j.Version;
 
 import com.gitblit.Constants;
 import com.gitblit.IStoredSettings;
@@ -64,9 +65,17 @@ public class TBACLReceiveHook extends ReceiveHook {
 			return;
 		}
 
-		if (receivePack.getUserModel().canAdmin(repository)) {
-			log.info("{}: permitting push from owner '{}'", name, user.username);
-			return;
+		Version systemVersion = receivePack.getGitblit().getSystemVersion();
+		if (systemVersion.atLeast(new Version(1, 6, 0))) {
+			if (user.canAdmin(repository)) {
+				log.info("{}: permitting push from owner '{}'", name, user.username);
+				return;
+			}
+		} else {
+			if (repository.isOwner(user.username) || user.isMyPersonalRepository(repository.name)) {
+				log.info("{}: permitting push from owner '{}'", name, user.username);
+				return;
+			}
 		}
 
 		for (ReceiveCommand cmd : commands) {
