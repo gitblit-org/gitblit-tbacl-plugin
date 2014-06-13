@@ -22,6 +22,8 @@ import com.gitblit.extensions.GitblitPlugin;
 
 public class Plugin extends GitblitPlugin {
 
+	public static final String SETTING_APPLY_TO_PERSONAL_REPOS = "tbacl.applyToPersonalRepos";
+
 	public Plugin(PluginWrapper wrapper) {
 		super(wrapper);
 

@@ -9,6 +9,26 @@ For example, if *joe* wants to push to the *master* branch he must be a member o
 **NOTE:**
 Only administrators or owners can push refs outside the branch namespace.
 
+### Installation
+
+This plugin is referenced in the Gitblit Plugin Registry and you may install it using SSH with an administrator account.
+
+    ssh host plugin refresh
+    ssh host plugin install tbacl
+    ssh host plugin ls
+
+Alternatively, you can download the zip and manually copy it to your `${baseFolder}/plugins` directory.
+
+### Setup
+
+There is no required setup but there are some optional settings you may want to configure.
+
+#### tbacl.applyToPersonalRepos
+
+*tbacl.applyToPersonalRepos* = true will apply the branch<->team requirement to personal repositories.
+
+By default, this setting is *false* so the tbacl plugin ignore personal repositories.
+
 ### Building against a Gitblit RELEASE
 
     mvn clean package && cp ./target/tbacl*.zip /path/to/gitblit/plugins

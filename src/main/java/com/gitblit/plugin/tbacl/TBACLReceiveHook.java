@@ -25,8 +25,10 @@ import org.slf4j.LoggerFactory;
 import ro.fortsoft.pf4j.Extension;
 
 import com.gitblit.Constants;
+import com.gitblit.IStoredSettings;
 import com.gitblit.extensions.ReceiveHook;
 import com.gitblit.git.GitblitReceivePack;
+import com.gitblit.models.RepositoryModel;
 import com.gitblit.models.UserModel;
 
 /**
@@ -49,13 +51,20 @@ public class TBACLReceiveHook extends ReceiveHook {
 	@Override
 	public void onPreReceive(GitblitReceivePack receivePack, Collection<ReceiveCommand> commands) {
 		final UserModel user = receivePack.getUserModel();
+		final RepositoryModel repository = receivePack.getRepositoryModel();
+		final IStoredSettings settings = receivePack.getGitblit().getSettings();
+
+		boolean applyToPersonalRepos = settings.getBoolean(Plugin.SETTING_APPLY_TO_PERSONAL_REPOS, false);
+		if (repository.isPersonalRepository() && !applyToPersonalRepos) {
+			return;
+		}
 
 		if (user.canAdmin()) {
 			log.info("{}: permitting push from administrator '{}'", name, user.username);
 			return;
 		}
 
-		if (receivePack.getUserModel().canAdmin(receivePack.getRepositoryModel())) {
+		if (receivePack.getUserModel().canAdmin(repository)) {
 			log.info("{}: permitting push from owner '{}'", name, user.username);
 			return;
 		}
