@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>gitblit-tbacl-plugin</name>
-  <comment>Simple team-branch ACL plugin.</comment>
+  <comment>Gitblit Team-Branch ACL (tbacl) Receive Hook</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

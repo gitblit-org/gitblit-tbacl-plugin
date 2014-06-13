@@ -31,10 +31,10 @@ By default, this setting is *false* so the tbacl plugin ignore personal reposito
 
 ### Building against a Gitblit RELEASE
 
-    mvn clean package && cp ./target/tbacl*.zip /path/to/gitblit/plugins
+    ant && cp ./build/target/tbacl*.zip /path/to/gitblit/plugins
 
 ### Building against a Gitblit SNAPSHOT
 
-    /path/to/dev/gitblit/ant installMaven
-    /path/to/dev/tbacl/mvn clean package && cp ./target/tbacl*.zip /path/to/gitblit/plugins
+    /path/to/dev/gitblit/ant installMoxie
+    /path/to/dev/tbacl/ant && cp ./build/target/tbacl*.zip /path/to/gitblit/plugins
 
