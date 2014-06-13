@@ -70,19 +70,25 @@ public class MockGitblit implements IGitblit {
 
 	final ConfigUserService userService;
 
+	final MemorySettings settings;
+
 	final Map<String, RepositoryModel> repos = new TreeMap<String, RepositoryModel>();
 
 	public MockGitblit() {
 		userService = new ConfigUserService(new File("src/test/resources/test-users.conf"));
+		settings = new MemorySettings();
+	}
+
+	@Override
+	public Version getSystemVersion() {
+		return new Version(1, 5, 0);
 	}
 
 	@Override
 	public File getGrapesFolder() {
-		// TODO Auto-generated method stub
 		try {
 			return File.createTempFile("test-", null).getParentFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -95,7 +101,7 @@ public class MockGitblit implements IGitblit {
 
 	@Override
 	public IStoredSettings getSettings() {
-		return new MemorySettings();
+		return settings;
 	}
 
 	@Override
@@ -261,12 +267,6 @@ public class MockGitblit implements IGitblit {
 
 	@Override
 	public List<PluginRegistration> getRegisteredPlugins(InstallState arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Version getSystemVersion() {
 		// TODO Auto-generated method stub
 		return null;
 	}

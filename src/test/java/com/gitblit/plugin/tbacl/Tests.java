@@ -30,7 +30,6 @@ import com.gitblit.git.GitblitReceivePack;
 import com.gitblit.manager.IGitblit;
 import com.gitblit.models.RepositoryModel;
 import com.gitblit.models.UserModel;
-import com.gitblit.plugin.tbacl.TBACLReceiveHook;
 
 /**
  * Tests the team-branch ACL plugin.
@@ -45,7 +44,20 @@ public class Tests extends Assert {
 	}
 
 	enum Branch {
-		master, green, yellow, red, black
+		master, green, yellow, red, black,
+		green_no_ns,  greenuse,  green_use_ns,
+		yellow_no_ns, yellowuse, yellow_use_ns,
+		red_no_ns,    reduse,    red_use_ns,
+		black_no_ns,  blackuse,  black_use_ns;
+
+		boolean useNamespace() {
+			return name().contains("use");
+		}
+
+		@Override
+		public String toString() {
+			return name().replace('_', '/');
+		}
 	}
 
 	protected void push(User username, Branch branch, boolean expectSuccess) {
@@ -55,6 +67,8 @@ public class Tests extends Assert {
 		repo.owners = Arrays.asList(User.owner.name());
 
 		IGitblit gitblit = new MockGitblit();
+		gitblit.getSettings().overrideSetting(Plugin.SETTING_USE_TEAM_NAMESPACES, branch.useNamespace());
+
 		try {
 			gitblit.updateRepositoryModel(repo.name, repo, false);
 		} catch (GitBlitException e) {
@@ -69,7 +83,7 @@ public class Tests extends Assert {
 		ObjectId sha2 = ObjectId.fromString("42972d830611fa4b1aa2c2c49c824a15e1987597");
 
 		List<ReceiveCommand> commands = Arrays.asList(
-				new ReceiveCommand(sha1, sha2, "refs/heads/" + branch)
+				new ReceiveCommand(sha1, sha2, "refs/heads/" + branch.toString())
 				);
 
 		TBACLReceiveHook hook = new TBACLReceiveHook();
@@ -108,7 +122,7 @@ public class Tests extends Assert {
 	}
 
 	@Test
-	public void testMasterPush() {
+	public void testMasterPushStrict() {
 		push(User.admin, Branch.master, true);
 		push(User.owner, Branch.master, true);
 
@@ -119,7 +133,8 @@ public class Tests extends Assert {
 	}
 
 	@Test
-	public void testGreenPush() {
+	public void testGreenPushStrict() {
+		// name
 		push(User.admin, Branch.green, true);
 		push(User.owner, Branch.green, true);
 
@@ -127,19 +142,37 @@ public class Tests extends Assert {
 		push(User.joe, Branch.green, false);
 
 		push(User.frank, Branch.green, true);
+
+		// namespace
+		push(User.admin, Branch.green_no_ns, true);
+		push(User.owner, Branch.green_no_ns, true);
+
+		push(User.george, Branch.green_no_ns, false);
+		push(User.joe, Branch.green_no_ns, false);
+
+		push(User.frank, Branch.green_no_ns, false);
 	}
 
 	@Test
-	public void testYellowPush() {
+	public void testYellowPushStrict() {
+		// name
 		push(User.admin, Branch.yellow, true);
 		push(User.owner, Branch.yellow, true);
 		push(User.george, Branch.yellow, true);
 		push(User.joe, Branch.yellow, true);
 		push(User.frank, Branch.yellow, true);
+
+		// namespace
+		push(User.admin, Branch.yellow_no_ns, true);
+		push(User.owner, Branch.yellow_no_ns, true);
+		push(User.george, Branch.yellow_no_ns, false);
+		push(User.joe, Branch.yellow_no_ns, false);
+		push(User.frank, Branch.yellow_no_ns, false);
 	}
 
 	@Test
-	public void testRedPush() {
+	public void testRedPushStrict() {
+		// name
 		push(User.admin, Branch.red, true);
 		push(User.owner, Branch.red, true);
 
@@ -147,15 +180,76 @@ public class Tests extends Assert {
 		push(User.joe, Branch.red, true);
 
 		push(User.frank, Branch.red, false);
+
+		// namespace
+		push(User.admin, Branch.red_no_ns, true);
+		push(User.owner, Branch.red_no_ns, true);
+
+		push(User.george, Branch.red_no_ns, false);
+		push(User.joe, Branch.red_no_ns, false);
+
+		push(User.frank, Branch.red_no_ns, false);
 	}
 
 	@Test
-	public void testBlackPush() {
+	public void testBlackPushStrict() {
+		// name
 		push(User.admin, Branch.black, true);
 		push(User.owner, Branch.black, true);
 
 		push(User.george, Branch.black, false);
 		push(User.joe, Branch.black, false);
 		push(User.frank, Branch.black, false);
+
+		// namespace
+		push(User.admin, Branch.black_no_ns, true);
+		push(User.owner, Branch.black_no_ns, true);
+
+		push(User.george, Branch.black_no_ns, false);
+		push(User.joe, Branch.black_no_ns, false);
+		push(User.frank, Branch.black_no_ns, false);
+	}
+
+	@Test
+	public void testPushNamespaces() {
+		// no namespace
+		push(User.admin, Branch.greenuse, true);
+		push(User.owner, Branch.greenuse, true);
+
+		push(User.george, Branch.greenuse, false);
+		push(User.joe, Branch.greenuse, false);
+		push(User.frank, Branch.greenuse, false);
+
+		push(User.george, Branch.yellowuse, false);
+		push(User.joe, Branch.yellowuse, false);
+		push(User.frank, Branch.yellowuse, false);
+
+		push(User.george, Branch.reduse, false);
+		push(User.joe, Branch.reduse, false);
+		push(User.frank, Branch.reduse, false);
+
+		push(User.george, Branch.blackuse, false);
+		push(User.joe, Branch.blackuse, false);
+		push(User.frank, Branch.blackuse, false);
+
+		// namespace
+		push(User.admin, Branch.green_use_ns, true);
+		push(User.owner, Branch.green_use_ns, true);
+
+		push(User.george, Branch.green_use_ns, false);
+		push(User.joe, Branch.green_use_ns, false);
+		push(User.frank, Branch.green_use_ns, true);
+
+		push(User.george, Branch.yellow_use_ns, true);
+		push(User.joe, Branch.yellow_use_ns, true);
+		push(User.frank, Branch.yellow_use_ns, true);
+
+		push(User.george, Branch.red_use_ns, true);
+		push(User.joe, Branch.red_use_ns, true);
+		push(User.frank, Branch.red_use_ns, false);
+
+		push(User.george, Branch.black_use_ns, false);
+		push(User.joe, Branch.black_use_ns, false);
+		push(User.frank, Branch.black_use_ns, false);
 	}
 }

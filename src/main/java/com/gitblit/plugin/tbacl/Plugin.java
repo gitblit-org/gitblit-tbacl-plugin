@@ -24,6 +24,8 @@ public class Plugin extends GitblitPlugin {
 
 	public static final String SETTING_APPLY_TO_PERSONAL_REPOS = "tbacl.applyToPersonalRepos";
 
+	public static final String SETTING_USE_TEAM_NAMESPACES = "tbacl.useTeamNamespaces";
+
 	public Plugin(PluginWrapper wrapper) {
 		super(wrapper);
 

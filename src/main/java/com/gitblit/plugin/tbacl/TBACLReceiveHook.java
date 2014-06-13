@@ -78,6 +78,7 @@ public class TBACLReceiveHook extends ReceiveHook {
 			}
 		}
 
+		boolean useTeamNamespaces = settings.getBoolean(Plugin.SETTING_USE_TEAM_NAMESPACES, false);
 		for (ReceiveCommand cmd : commands) {
 			String reject = String.format("%s: Sorry, '%s' does not have permission to push to '%s'",
 					name, user.username, cmd.getRefName());
@@ -85,9 +86,27 @@ public class TBACLReceiveHook extends ReceiveHook {
 			if (cmd.getRefName().startsWith(Constants.R_HEADS)) {
 				// pushing a branch
 				String branch = Repository.shortenRefName(cmd.getRefName());
+				String team;
+
+				if (useTeamNamespaces) {
+					if (branch.indexOf('/') == -1) {
+						// not a team namespace branch
+						String notTeamBranch = String.format("%s: Sorry, '%s' is not a team branch! e.g. refs/heads/{team}/%s'",
+								name, cmd.getRefName(), branch);
+						log.debug(notTeamBranch);
+						cmd.setResult(Result.REJECTED_OTHER_REASON, notTeamBranch);
+						continue;
+					} else {
+						// extract team name from the branch
+						team = branch.substring(0, branch.indexOf('/'));
+					}
+				} else {
+					team = branch;
+				}
 
 				// enforce user is member of team named for a branch
-				if (!user.isTeamMember(branch)) {
+				if (!user.isTeamMember(team)) {
+					log.debug(reject);
 					cmd.setResult(Result.REJECTED_OTHER_REASON, reject);
 				} else {
 					log.info("{}: permitting push from '{}' to branch '{}'", name, user.username, branch);
