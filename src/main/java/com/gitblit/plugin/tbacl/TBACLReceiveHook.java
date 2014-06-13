@@ -55,7 +55,7 @@ public class TBACLReceiveHook extends ReceiveHook {
 			return;
 		}
 
-		if (receivePack.getRepositoryModel().isOwner(user.username)) {
+		if (receivePack.getUserModel().canAdmin(receivePack.getRepositoryModel())) {
 			log.info("{}: permitting push from owner '{}'", name, user.username);
 			return;
 		}
