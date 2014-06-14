@@ -7,7 +7,7 @@ requires: 0.9.2
 
 # Project Metadata
 name: gitblit-tbacl-plugin
-description: Gitblit Team-Branch ACL (tbacl) Receive Hook
+description: Gitblit Team-Branch ACLs
 groupId: com.gitblit.plugin
 artifactId: tbacl
 version: 1.1.1-SNAPSHOT

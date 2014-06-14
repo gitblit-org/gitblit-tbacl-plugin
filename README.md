@@ -1,4 +1,4 @@
-## Gitblit Team-Branch ACL (tbacl) Receive Hook
+## Gitblit Team-Branch ACLs
 
 *REQUIRES 1.5.0*
 
